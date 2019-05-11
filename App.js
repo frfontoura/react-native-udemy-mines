@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { StyleSheet, Text, View, Alert } from "react-native";
 
 import params from "./src/params";
+import Header from "./src/components/Header";
 import MineField from "./src/components/MineField";
 import {
   createMinedBoard,
@@ -21,6 +22,12 @@ export default function App() {
   const [board, setBoard] = useState(
     createMinedBoard(rows, cols, minesAmount())
   );
+
+  function createState() {
+    setBoard(createMinedBoard(rows, cols, minesAmount()));
+    setWon(false);
+    setLost(false);
+  }
 
   function minesAmount() {
     return Math.ceil(cols * rows * params.difficultLevel);
@@ -56,7 +63,7 @@ export default function App() {
     }
 
     setBoard(clone);
-    setWon(won);
+    setWon(isWon);
   }
 
   onLevelSelected = level => {
@@ -66,11 +73,10 @@ export default function App() {
 
   return (
     <View style={styles.container}>
-      <Text>Iniciando o Mines</Text>
-      <Text>
-        {params.getRowsAmount()}x{params.getColumnsAmount()}
-      </Text>
-
+      <Header
+        flagsLeft={minesAmount() - flagsUsed(board)}
+        onNewGame={() => createState()}
+      />
       <View styles={styles.board}>
         <MineField
           board={board}
